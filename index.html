@@ -220,7 +220,7 @@
         <span class="logo-icon">⬡</span>
         TabVault
       </div>
-      <a class="nav-link" href="https://chromewebstore.google.com" target="_blank">Add to Chrome</a>
+      <a class="nav-link" id="nav-cta" href="https://chromewebstore.google.com" target="_blank">Add to Chrome</a>
     </div>
   </nav>
 
@@ -233,7 +233,7 @@
         Stop losing your tabs. TabVault lets you save groups of browser tabs as named workspaces
         and restore them instantly — with one click or a keyboard shortcut.
       </p>
-      <a class="hero-cta" href="https://chromewebstore.google.com" target="_blank">
+      <a class="hero-cta" id="hero-cta" href="https://chromewebstore.google.com" target="_blank">
         ⬡ Add to Chrome — it's free
       </a>
     </section>
@@ -284,17 +284,17 @@
           <div class="pricing-price">€0</div>
           <div class="pricing-period">forever</div>
           <ul class="pricing-features">
-            <li>Up to 15 workspaces</li>
+            <li>Up to 3 workspaces</li>
             <li>Tags, notes, search</li>
             <li>Auto-backups</li>
             <li>Version history</li>
             <li>Keyboard shortcuts</li>
           </ul>
-          <a class="btn-pricing btn-free" href="https://chromewebstore.google.com" target="_blank">Add to Chrome</a>
+          <a class="btn-pricing btn-free" id="pricing-free-cta" href="https://chromewebstore.google.com" target="_blank">Add to Chrome</a>
         </div>
         <div class="pricing-card pro">
           <div class="pricing-name">Pro</div>
-          <div class="pricing-price">€2.99</div>
+          <div class="pricing-price">€1.50</div>
           <div class="pricing-period">per month</div>
           <ul class="pricing-features">
             <li>Everything in Free</li>
@@ -310,9 +310,25 @@
 
   <footer>
     <div class="container">
-      TabVault — &copy; 2025 · <a href="mailto:hello@tabvault.app">hello@tabvault.app</a>
+      TabVault &copy; 2026
     </div>
   </footer>
 
+  <script>
+    const CHROME_URL  = 'https://chromewebstore.google.com'
+    const FIREFOX_URL = 'https://addons.mozilla.org/firefox/addon/tabvault'
+
+    const isFirefox = navigator.userAgent.includes('Firefox')
+    const storeUrl  = isFirefox ? FIREFOX_URL : CHROME_URL
+    const label     = isFirefox ? 'Add to Firefox — it\'s free' : 'Add to Chrome — it\'s free'
+    const btnLabel  = isFirefox ? 'Add to Firefox' : 'Add to Chrome'
+
+    document.getElementById('nav-cta').href        = storeUrl
+    document.getElementById('nav-cta').textContent = btnLabel
+    document.getElementById('hero-cta').href        = storeUrl
+    document.getElementById('hero-cta').textContent = '⬡ ' + label
+    document.getElementById('pricing-free-cta').href        = storeUrl
+    document.getElementById('pricing-free-cta').textContent = btnLabel
+  </script>
 </body>
 </html>
