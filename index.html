@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TabVault — Save and restore your browser workspaces</title>
+  <meta name="description" content="TabVault is a Chrome extension that saves, organizes, and restores groups of browser tabs as named workspaces." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2d3e;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --sub: #9ca3af;
+      --accent: #6366f1;
+      --accent-h: #818cf8;
+      --success: #10b981;
+      --gold: #f59e0b;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    a { color: var(--accent-h); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .logo-icon { color: var(--accent); font-size: 20px; }
+    .nav-link {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      padding: 7px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .nav-link:hover { background: var(--accent-h); text-decoration: none; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      color: var(--accent-h);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--accent-h); }
+    .hero p {
+      font-size: 18px;
+      color: var(--sub);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+    .hero-cta:hover { background: var(--accent-h); text-decoration: none; }
+
+    /* Features */
+    .section { padding: 60px 0; border-top: 1px solid var(--border); }
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-h);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section h2 {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 40px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .feature-icon { font-size: 22px; margin-bottom: 10px; }
+    .feature-card h3 {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .feature-card p { font-size: 13px; color: var(--sub); line-height: 1.5; }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 600px;
+    }
+    @media (max-width: 500px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .pricing-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .pricing-card.pro {
+      border-color: color-mix(in srgb, var(--gold) 50%, transparent);
+      background: color-mix(in srgb, var(--gold) 5%, var(--card));
+    }
+    .pricing-name {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .pricing-card.pro .pricing-name { color: var(--gold); }
+    .pricing-price {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .pricing-period { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .pricing-features li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .pricing-features li::before { content: '✓'; color: var(--success); font-weight: 700; flex-shrink: 0; }
+    .pricing-features li.pro-only::before { content: '★'; color: var(--gold); }
+    .btn-pricing {
+      display: block;
+      text-align: center;
+      border-radius: 6px;
+      padding: 9px 0;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-pricing:hover { opacity: .85; text-decoration: none; }
+    .btn-free { border: 1px solid var(--border); color: var(--muted); }
+    .btn-pro { background: var(--gold); color: #000; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        TabVault
+      </div>
+      <a class="nav-link" href="https://chromewebstore.google.com" target="_blank">Add to Chrome</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <section class="hero">
+      <div class="hero-badge">Chrome Extension · Manifest V3</div>
+      <h1>Save and restore your<br /><span>browser workspaces</span></h1>
+      <p>
+        Stop losing your tabs. TabVault lets you save groups of browser tabs as named workspaces
+        and restore them instantly — with one click or a keyboard shortcut.
+      </p>
+      <a class="hero-cta" href="https://chromewebstore.google.com" target="_blank">
+        ⬡ Add to Chrome — it's free
+      </a>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Features</div>
+      <h2>Everything you need to manage your tabs</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🗂</div>
+          <h3>Named Workspaces</h3>
+          <p>Save all your open tabs as a named workspace and restore them in a new window anytime.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⌨</div>
+          <h3>Keyboard Shortcuts</h3>
+          <p>Alt+S to save, Alt+F to search, Alt+1–9 to restore — all without touching the mouse.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏷</div>
+          <h3>Tags & Search</h3>
+          <p>Tag workspaces, filter by tag, and search across names, notes, and tab titles instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⏱</div>
+          <h3>Auto-backups</h3>
+          <p>Automatic snapshots every 5 minutes protect your workspaces from accidental deletion.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">↺</div>
+          <h3>Version History</h3>
+          <p>Every rename or edit is recorded. Roll back any workspace to any earlier version.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">☁</div>
+          <h3>Cloud Sync <span style="color:var(--gold);font-size:11px;">Pro</span></h3>
+          <p>Sync workspaces across all your Chrome / Edge / Firefox installations automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-label">Pricing</div>
+      <h2>Simple, honest pricing</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-name">Free</div>
+          <div class="pricing-price">€0</div>
+          <div class="pricing-period">forever</div>
+          <ul class="pricing-features">
+            <li>Up to 15 workspaces</li>
+            <li>Tags, notes, search</li>
+            <li>Auto-backups</li>
+            <li>Version history</li>
+            <li>Keyboard shortcuts</li>
+          </ul>
+          <a class="btn-pricing btn-free" href="https://chromewebstore.google.com" target="_blank">Add to Chrome</a>
+        </div>
+        <div class="pricing-card pro">
+          <div class="pricing-name">Pro</div>
+          <div class="pricing-price">€2.99</div>
+          <div class="pricing-period">per month</div>
+          <ul class="pricing-features">
+            <li>Everything in Free</li>
+            <li class="pro-only">Unlimited workspaces</li>
+            <li class="pro-only">Cloud sync across devices</li>
+          </ul>
+          <a class="btn-pricing btn-pro" href="#" target="_blank">Get Pro</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      TabVault — &copy; 2025 · <a href="mailto:hello@tabvault.app">hello@tabvault.app</a>
+    </div>
+  </footer>
+
+</body>
+</html>
