@@ -202,6 +202,34 @@
     .btn-free { border: 1px solid var(--border); color: var(--muted); }
     .btn-pro { background: var(--gold); color: #000; }
 
+    /* Pricing billing toggle */
+    .pricing-billing-toggle { display:flex; gap:0; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:3px; width:fit-content; margin-bottom:24px; }
+    .pricing-billing-btn { background:none; border:none; color:var(--muted); font-family:'Space Grotesk',system-ui,sans-serif; font-size:13px; padding:7px 18px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .15s,color .15s; }
+    .pricing-billing-btn.active { background:var(--accent); color:#fff; font-weight:600; }
+    .pricing-save-badge { background:color-mix(in srgb,#10b981 20%,transparent); color:#10b981; border-radius:20px; padding:1px 7px; font-size:11px; font-weight:600; }
+
+    /* Changelog */
+    .changelog { display: flex; flex-direction: column; gap: 0; }
+    .changelog-entry { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+    .changelog-entry:last-child { border-bottom: none; }
+    .changelog-meta { flex-shrink: 0; width: 90px; }
+    .changelog-version {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 13px; font-weight: 700; color: var(--text);
+    }
+    .changelog-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .changelog-badge {
+      display: inline-block; margin-top: 6px;
+      font-size: 10px; font-weight: 600; border-radius: 4px;
+      padding: 1px 6px; letter-spacing: .03em;
+    }
+    .badge-major { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent-h); }
+    .badge-minor { background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success); }
+    .changelog-items { flex: 1; display: flex; flex-direction: column; gap: 5px; padding-top: 2px; }
+    .changelog-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--sub); }
+    .changelog-item::before { content: '·'; color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+    .changelog-item strong { color: var(--text); font-weight: 500; }
+
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -227,7 +255,7 @@
   <div class="container">
 
     <section class="hero">
-      <div class="hero-badge">Chrome Extension · Manifest V3</div>
+      <div class="hero-badge" id="hero-badge">Chrome Extension · Manifest V3</div>
       <h1>Save and restore your<br /><span>browser workspaces</span></h1>
       <p>
         Stop losing your tabs. TabVault lets you save groups of browser tabs as named workspaces
@@ -248,9 +276,9 @@
           <p>Save all your open tabs as a named workspace and restore them in a new window anytime.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">⌨</div>
-          <h3>Keyboard Shortcuts</h3>
-          <p>Alt+S to save, Alt+F to search, Alt+1–9 to restore — all without touching the mouse.</p>
+          <div class="feature-icon">⬡</div>
+          <h3>Tab Groups</h3>
+          <p>Saves and restores your tab group structure — colors and names included.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🏷</div>
@@ -268,16 +296,39 @@
           <p>Every rename or edit is recorded. Roll back any workspace to any earlier version.</p>
         </div>
         <div class="feature-card">
+          <div class="feature-icon">⌨</div>
+          <h3>Keyboard Shortcuts</h3>
+          <p>Alt+S to save, Alt+F to search, Alt+1–9 to restore — all without touching the mouse.</p>
+        </div>
+        <div class="feature-card">
           <div class="feature-icon">☁</div>
           <h3>Cloud Sync <span style="color:var(--gold);font-size:11px;">Pro</span></h3>
-          <p>Sync workspaces across all your Chrome / Edge / Firefox installations automatically.</p>
+          <p>Sync workspaces across your devices via built-in browser account sync, or transfer between any browsers using Export / Import JSON.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">◷</div>
+          <h3>Scheduled Restore <span style="color:var(--gold);font-size:11px;">Pro</span></h3>
+          <p>Open a workspace automatically on specific days and times — no manual action needed.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⊛</div>
+          <h3>Pinned Workspaces <span style="color:var(--gold);font-size:11px;">Pro</span></h3>
+          <p>Pin your most-used workspaces to always appear at the top of the list.</p>
         </div>
       </div>
     </section>
 
     <section class="section">
       <div class="section-label">Pricing</div>
-      <h2>Simple, honest pricing</h2>
+      <h2>Simple, honest pricing</h2>WHATS NEW
+
+      <div class="pricing-billing-toggle">
+        <button class="pricing-billing-btn active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+        <button class="pricing-billing-btn" id="btn-annual" onclick="setBilling('annual')">
+          Annual <span class="pricing-save-badge">Save 33%</span>
+        </button>
+      </div>
+
       <div class="pricing-grid">
         <div class="pricing-card">
           <div class="pricing-name">Free</div>
@@ -294,15 +345,101 @@
         </div>
         <div class="pricing-card pro">
           <div class="pricing-name">Pro</div>
-          <div class="pricing-price">€1.50</div>
-          <div class="pricing-period">per month</div>
+          <div class="pricing-price" id="pro-price">€1.50</div>
+          <div class="pricing-period" id="pro-period">per month</div>
           <ul class="pricing-features">
             <li>Everything in Free</li>
             <li class="pro-only">Unlimited workspaces</li>
+            <li class="pro-only">Pinned workspaces</li>
             <li class="pro-only">Cloud sync across devices</li>
+            <li class="pro-only">Scheduled restore</li>
           </ul>
-          <a class="btn-pricing btn-pro" href="#" target="_blank">Get Pro</a>
+          <a class="btn-pricing btn-pro" id="pricing-pro-cta" href="https://nixstudio.lemonsqueezy.com/checkout/buy/7d3a3cf2-133f-4723-b6f4-9ba61d9ee366?media=0&discount=0" target="_blank">Get Pro — €1.50 / month</a>
         </div>
+      </div>
+    </section>
+
+  </div>
+  <div class="container">
+
+    <section class="section">
+      <div class="section-label">Changelog</div>
+      <h2>What's new</h2>
+      <div class="changelog">
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
+            <div class="changelog-version">v1.5</div>
+            <div class="changelog-date">Jun 2026</div>
+            <span class="changelog-badge badge-minor">Update</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>Pinned workspaces</strong> — pin favorites to always appear at the top (Pro)</div>
+            <div class="changelog-item"><strong>Scheduled restore</strong> — open workspaces automatically on chosen days and time (Pro)</div>
+            <div class="changelog-item"><strong>Tab Groups</strong> — saves and restores tab group colors and names</div>
+            <div class="changelog-item"><strong>Annual billing</strong> — €12/year option added (save 33%)</div>
+            <div class="changelog-item"><strong>Close tabs after save</strong> — option to close saved tabs immediately</div>
+          </div>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
+            <div class="changelog-version">v1.4</div>
+            <div class="changelog-date">Jun 2026</div>
+            <span class="changelog-badge badge-major">Major</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>Pro plan</strong> — unlimited workspaces + cloud sync</div>
+            <div class="changelog-item"><strong>Cloud sync</strong> — workspaces sync automatically across devices</div>
+            <div class="changelog-item"><strong>Share code</strong> — share a single workspace via a copy-paste code</div>
+            <div class="changelog-item"><strong>Color picker</strong> — choose workspace color when saving</div>
+            <div class="changelog-item"><strong>Light / dark theme</strong> — toggle in the menu</div>
+            <div class="changelog-item"><strong>Full-page view</strong> — open TabVault in a full browser tab</div>
+          </div>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
+            <div class="changelog-version">v1.3</div>
+            <div class="changelog-date">Jun 2026</div>
+            <span class="changelog-badge badge-minor">Update</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>Tags & filters</strong> — tag workspaces and filter by tag</div>
+            <div class="changelog-item"><strong>Version history</strong> — roll back any workspace to an earlier state</div>
+            <div class="changelog-item"><strong>Delete backups</strong> — manually remove individual auto-backups</div>
+          </div>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
+            <div class="changelog-version">v1.2</div>
+            <div class="changelog-date">Jun 2026</div>
+            <span class="changelog-badge badge-minor">Update</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>Notes</strong> — add a note to any workspace</div>
+            <div class="changelog-item"><strong>Auto-backup</strong> — automatic snapshots every 5 minutes</div>
+            <div class="changelog-item"><strong>Export / Import JSON</strong> — back up and restore workspaces</div>
+            <div class="changelog-item"><strong>Keyboard shortcuts</strong> — Alt+S, Alt+F, Alt+1–9</div>
+          </div>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
+            <div class="changelog-version">v1.0</div>
+            <div class="changelog-date">Jun 2026</div>
+            <span class="changelog-badge badge-major">Launch</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>Save workspaces</strong> — capture all open tabs as a named workspace</div>
+            <div class="changelog-item"><strong>Restore</strong> — reopen any workspace in a new window</div>
+            <div class="changelog-item"><strong>Search</strong> — search across workspace names, notes, and tab titles</div>
+            <div class="changelog-item"><strong>Drag & drop</strong> — reorder workspaces</div>
+            <div class="changelog-item"><strong>Rename</strong> — double-click to rename any workspace</div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -329,6 +466,22 @@
     document.getElementById('hero-cta').textContent = '⬡ ' + label
     document.getElementById('pricing-free-cta').href        = storeUrl
     document.getElementById('pricing-free-cta').textContent = btnLabel
+    document.getElementById('hero-badge').textContent = isFirefox
+      ? 'Firefox Extension · Manifest V3'
+      : 'Chrome Extension · Manifest V3'
+
+    const MONTHLY_URL = 'https://nixstudio.lemonsqueezy.com/checkout/buy/7d3a3cf2-133f-4723-b6f4-9ba61d9ee366?media=0&discount=0'
+    const ANNUAL_URL  = 'https://nixstudio.lemonsqueezy.com/checkout/buy/7b2a5ec3-fca5-448a-a6b2-ee4f746d2610?media=0&discount=0'
+
+    window.setBilling = function(cycle) {
+      const isAnnual = cycle === 'annual'
+      document.getElementById('btn-monthly').classList.toggle('active', !isAnnual)
+      document.getElementById('btn-annual').classList.toggle('active', isAnnual)
+      document.getElementById('pro-price').textContent     = isAnnual ? '€12' : '€1.50'
+      document.getElementById('pro-period').textContent    = isAnnual ? '/ year — €1.00 / month' : 'per month'
+      document.getElementById('pricing-pro-cta').href      = isAnnual ? ANNUAL_URL : MONTHLY_URL
+      document.getElementById('pricing-pro-cta').textContent = isAnnual ? 'Get Pro — €12 / year' : 'Get Pro — €1.50 / month'
+    }
   </script>
 </body>
 </html>
