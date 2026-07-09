@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TabWorkset — Save and restore your browser workspaces</title>
-  <meta name="description" content="TabWorkset is a Chrome extension that saves, organizes, and restores groups of browser tabs as named workspaces." />
+  <title>TabWorkset — Tab manager to save and restore your browser workspaces</title>
+  <meta name="description" content="TabWorkset is a tab manager extension for Chrome and Firefox that saves, organizes, and restores groups of browser tabs — including tab groups — as named workspaces." />
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
@@ -370,6 +370,28 @@
 
         <div class="changelog-entry">
           <div class="changelog-meta">
+            <div class="changelog-version">v1.5.3</div>
+            <div class="changelog-date">Jul 2026</div>
+            <span class="changelog-badge badge-minor">Update</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>Quieter restore</strong> — background tabs stay paused until you click into them, so video/audio no longer autoplays all at once</div>
+          </div>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
+            <div class="changelog-version">v1.5.1</div>
+            <div class="changelog-date">Jul 2026</div>
+            <span class="changelog-badge badge-minor">Update</span>
+          </div>
+          <div class="changelog-items">
+            <div class="changelog-item"><strong>New icon</strong></div>
+          </div>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-meta">
             <div class="changelog-version">v1.5</div>
             <div class="changelog-date">Jun 2026</div>
             <span class="changelog-badge badge-minor">Update</span>
@@ -456,7 +478,7 @@
     const CHROME_URL  = 'https://chromewebstore.google.com/detail/tabworkset/fjhecbpdemdkhdmhmpghpjnfgmgolpbl'
     const FIREFOX_URL = 'https://addons.mozilla.org/firefox/addon/tabworkset'
 
-    const isFirefox = false // navigator.userAgent.includes('Firefox')
+    const isFirefox = navigator.userAgent.includes('Firefox')
     const storeUrl  = isFirefox ? FIREFOX_URL : CHROME_URL
     const label     = isFirefox ? 'Add to Firefox — it\'s free' : 'Add to Chrome — it\'s free'
     const btnLabel  = isFirefox ? 'Add to Firefox' : 'Add to Chrome'
